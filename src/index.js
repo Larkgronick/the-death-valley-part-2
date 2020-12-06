@@ -254,8 +254,10 @@ function saveData(){
 window.onload = function loadTasks() {
     taskField.innerHTML = "";
     const loadedTodo = JSON.parse(localStorage.getItem('toDo'));
-    toDo = loadedTodo;
-    toDoCount = loadedTodo.length;
+    if(loadedTodo !== null){
+        toDo = loadedTodo;
+        toDoCount = loadedTodo.length;
+    }
     document.getElementById('toDo-count').innerHTML = ' (' + toDoCount + ')'; 
     loadedTodo.forEach(function(el, index){
         return createTaskField(index, taskField);
