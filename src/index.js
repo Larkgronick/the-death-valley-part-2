@@ -12,6 +12,9 @@ const text = document.getElementById('inputText');
 const taskField = document.getElementById('currentTasks');
 const completeField = document.getElementById('completedTasks');
 const priorityFields = document.getElementsByClassName('form-check-input');
+const newSort = document.getElementById('sort-from-new');
+const oldSort = document.getElementById('sort-from-old');
+const save = document.getElementById('save');
 
 
 function setTaskTime(){
@@ -114,22 +117,22 @@ function createNewTask(){
 }
 
 
-function addTask(e){
+function addTask(){
     const taskCount = taskField.getElementsByTagName("li").length
     let task = {
         title: '',
         text: '',
         priority: '',
-        time: ''
+        time: '',
+        date: ''
 
     }
-    e.preventDefault();
     task.title = title.value;
     task.text = text.value;
     task.priority = selectPriority() + ' priority';
     task.time = setTaskTime();
+    task.date = new Date();
     toDo.push(task);
-    console.log(toDo)
     createTaskField(taskCount, taskField);
     toDoCount++
     document.getElementById('toDo-count').innerHTML = ' (' + toDoCount + ')';
@@ -215,6 +218,47 @@ function deleteTaskData(){
     }
 }
 
+
+function sortFromNew(){
+    toDo.sort(function(a,b){
+        return new Date(a.date) - new Date(b.date);
+      });
+    taskField.innerHTML = "";
+    toDo.forEach(function(el, index){
+        return createTaskField(index, taskField);
+    })
+}
+
+function sortFromOld(){
+    toDo.sort(function(a,b){
+        return new Date(b.date) - new Date(a.date); 
+      });
+    taskField.innerHTML = "";
+    toDo.forEach(function(el, index){
+        return createTaskField(index, taskField);
+    })
+}
+
 newTask.addEventListener('click', createNewTask)
 addTaskButton.addEventListener('click', addTask);
 editTaskButton.addEventListener('click', saveEditChanges);
+newSort.addEventListener('click', sortFromNew);
+oldSort.addEventListener('click', sortFromOld);
+save.addEventListener('click', saveData)
+
+
+function saveData(){
+    localStorage.setItem('toDo', JSON.stringify(toDo));
+}
+
+window.onload = function loadTasks() {
+    taskField.innerHTML = "";
+    const loadedTodo = JSON.parse(localStorage.getItem('toDo'));
+    toDo = loadedTodo;
+    toDoCount = loadedTodo.length;
+    document.getElementById('toDo-count').innerHTML = ' (' + toDoCount + ')'; 
+    loadedTodo.forEach(function(el, index){
+        return createTaskField(index, taskField);
+    })
+}
+ 
