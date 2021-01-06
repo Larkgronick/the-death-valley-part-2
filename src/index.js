@@ -16,6 +16,7 @@ const priorityFields = document.getElementsByClassName('form-check-input');
 const newSort = document.getElementById('sort-from-new');
 const oldSort = document.getElementById('sort-from-old');
 const save = document.getElementById('save');
+const themeSwitcher = document.getElementById('customSwitch1');
 
 
 function setTaskTime(){
@@ -39,6 +40,9 @@ function createTaskField(count, area){
     let li = document.createElement('li');
     li.classList.add("list-group-item","d-flex","w-100", "mb-2");
     area.appendChild(li);
+    
+    colorizeTask(li, toDo[count].priority);
+   
     let wrapper = document.createElement('div');
     wrapper.classList.add("w-100", "mb-2");
     li.appendChild(wrapper);
@@ -111,6 +115,24 @@ function createTaskField(count, area){
 
 }
 
+function colorizeTask(li, priority){
+    switch (priority) {
+        case 'Low priority':
+            li.style.backgroundColor = '#ffc916';
+            break;
+
+        case 'Medium priority':
+            li.style.backgroundColor = '#a3cd3b';
+            break;
+
+        case 'High priority':
+            li.style.backgroundColor = '#ff4943';
+            break;
+    }
+
+}
+
+
 function createNewTask(){
     editTaskButton.style.display = "none";
     addTaskButton.style.display = "inline";
@@ -175,9 +197,11 @@ function editTaskData(){
             document.getElementById('Low').checked = "true";
             break;
     }
+  
 }
 
 function saveEditChanges(){   
+    let li = document.querySelectorAll('.list-group-item')[index];
     let task = {
         title: '',
         text: '',
@@ -198,7 +222,9 @@ function saveEditChanges(){
     newText.innerHTML = task.text;
     newPriority.innerHTML = selectPriority() + ' priority';
     newTime.innerHTML = setTaskTime();
-    editTaskButton.setAttribute("data-dismiss", "modal")
+    colorizeTask(li, selectPriority() + ' priority');
+    editTaskButton.setAttribute("data-dismiss", "modal");
+    
 
 }
 
@@ -218,7 +244,6 @@ function deleteTaskData(){
         document.getElementById('completed-count').innerHTML = ' (' + completedCount + ')';
     }
 }
-
 
 function sortFromNew(){
     toDo.sort(function(a,b){
@@ -240,23 +265,42 @@ function sortFromOld(){
     })
 }
 
+function changeTheme(){
+    if(themeSwitcher.checked){
+        document.querySelector('.navbar').classList.remove('bg-light');
+        document.querySelector('.modal-content').style.backgroundColor = '#0e1621';
+        document.body.style.backgroundColor = '#0e1621';
+        document.body.style.color = 'white'; 
+        themeSwitcher.nextElementSibling.textContent = 'Dark Mode';
+    } else {
+        document.querySelector('.navbar').classList.add('bg-light');
+        document.querySelector('.modal-content').style.backgroundColor = 'white';
+        document.body.style.backgroundColor = 'white';
+        document.body.style.color = 'black'; 
+        themeSwitcher.nextElementSibling.textContent = 'White Mode';
+
+    }
+
+}
+
+
 newTask.addEventListener('click', createNewTask)
 addTaskButton.addEventListener('click', addTask);
 editTaskButton.addEventListener('click', saveEditChanges);
 newSort.addEventListener('click', sortFromNew);
 oldSort.addEventListener('click', sortFromOld);
-save.addEventListener('click', saveData)
+save.addEventListener('click', saveData);
+themeSwitcher.addEventListener('click', changeTheme)
 
 
 function saveData(){
     localStorage.setItem('toDo', JSON.stringify(toDo));
 }
 
+
 window.onload = function loadTasks() {
     taskField.innerHTML = "";
-    if(JSON.parse(localStorage.getItem('toDo').length > 0){
-        loadedTodo = JSON.parse(localStorage.getItem('toDo')
-    }
+    loadedTodo = JSON.parse(localStorage.getItem('toDo'));
     toDo = loadedTodo;
     toDoCount = loadedTodo.length;
     document.getElementById('toDo-count').innerHTML = ' (' + toDoCount + ')'; 
@@ -264,4 +308,3 @@ window.onload = function loadTasks() {
         return createTaskField(index, taskField);
     })
 }
- 
