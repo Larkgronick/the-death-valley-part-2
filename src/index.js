@@ -299,12 +299,15 @@ function saveData(){
 
 
 window.onload = function loadTasks() {
-    taskField.innerHTML = "";
-    loadedTodo = JSON.parse(localStorage.getItem('toDo'));
-    toDo = loadedTodo;
-    toDoCount = loadedTodo.length;
-    document.getElementById('toDo-count').innerHTML = ' (' + toDoCount + ')'; 
-    loadedTodo.forEach(function(el, index){
-        return createTaskField(index, taskField);
-    })
+    if(localStorage.getItem('toDo') !== null){
+        loadedTodo = JSON.parse(localStorage.getItem('toDo'));
+        taskField.innerHTML = "";
+        toDo = loadedTodo;
+        toDoCount = loadedTodo.length;
+        document.getElementById('toDo-count').innerHTML = ' (' + toDoCount + ')'; 
+        loadedTodo.forEach(function(el, index){
+            return createTaskField(index, taskField);
+        })
+    }
+    
 }
